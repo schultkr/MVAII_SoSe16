@@ -5,7 +5,7 @@
 
 ```yaml
 
-Name of Quantlet: MVA_pcastockselection_algorithm
+Name of Quantlet: 'MVA_pcastockselection_algorithm'
  
 Published in: MVA
 
@@ -17,7 +17,7 @@ eigenvalues are sufficiently close to each other.'
 
 Keywords: pca, returns, stock selection, portfolio management, eigenvalues, eigenvectors
      
-See also: MVA_pcastockselection_results, MVA_pcastockselection_datapreperation
+See also: 'MVA_pcastockselection_results, MVA_pcastockselection_datapreperation'
 
 Author: Christoph Schult
 
