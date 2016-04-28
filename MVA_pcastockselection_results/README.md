@@ -14,7 +14,6 @@ Description: ’This quantlet produces plots to illustrate the results of the prin
 selection process. Stocks are iteratively selected according to their contribution
 to principal components. For each portfolio the performance is plotted and the time
 series of returns.'
-
   
 Keywords: pca, time series, plot, returns, stock selection, portfolio management 
      
