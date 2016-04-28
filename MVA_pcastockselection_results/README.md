@@ -9,7 +9,7 @@ Name of Quantlet: MVA_pcastockselection_results
  
 Published in: MVA
 
-Description: ’This quantlet produces plots to illustrate the results of the principal component 
+Description: ’This quantlet produces plots to illustrate the results of the principal component
 selection process. Stocks are iteratively selected according to their contribution
 to principal components. For each portfolio the performance is plotted and the time
 series of returns.'
@@ -123,4 +123,5 @@ plotportfolios = function(sFileName) {
 
 # create plots
 lapply(sReadDataFile, plotportfolios)
+
 ```
