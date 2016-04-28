@@ -24,10 +24,10 @@ Author: Christoph Schult
 
 Datafile: Portfolios2014to2016.dat, Portfolios2011to2016.dat, Portfolios2006to2016.dat
      
-Output: Three plots for PCA portfolio returns and values for different time periods. All 
+Output: 'Three plots for PCA portfolio returns and values for different time periods. All 
 portfolios constructed according to pca (red) are compared to the  portfolio with
 all members of the index (blue). The asset universe are constituents in the STOXX
-EUROPE 600 index.
+EUROPE 600 index.'
 
 
 ```
