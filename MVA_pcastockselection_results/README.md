@@ -9,23 +9,29 @@ Name of Quantlet: MVA_pcastockselection_results
  
 Published in: MVA
 
-Description: 'The quantlet reads total return data and constituents for the STOXX EUROPE 600
-index from two csv files. A specified time interval is selected and pulled from
-the data, afterwards saved as Prices.dat. This file is used later on in quantlet
-MVA_pcastockselection_algorithm as input to select stocks.'
+Description: ’This quantlet produces plots to illustrate the results of the principal component 
+selection process. Stocks are iteratively selected according to their contribution
+to principal components. For each portfolio the performance is plotted and the time
+series of returns.'
+
   
-Keywords: stocks, portfolio, time series, stock selection, index, pca
+Keywords: pca, time series, plot, returns, stock selection, portfolio management 
      
-See also: 'MVA_pcastockselection_algorithm, MVA_pcastockselection_results'
+See also: MVA_pcastockselection_algorithm, MVA_pcastockselection_datapreperation
 
-Author: Christoph, Schult
+Author: Christoph Schult
 
-Datafile: TimeSeriesData.csv, Constituents.csv
+Datafile: Portfolios2014to2016.dat, Portfolios2011to2016.dat, Portfolios2006to2016.dat
      
-Output: A csv file with prices of stocks for a determined time interval.
+Output: 'Three plots for PCA portfolio returns and values for different time periods. All 
+portfolios constructed according to pca (red) are compared to the  portfolio with
+all members of the index (blue). The asset universe are constituents in the STOXX
+EUROPE 600 index.'
 
 ```
 ![Picture1](portfolioreturns2006to2016.png)
+![Picture2](portfolioreturns2011to2016.png)
+![Picture3](portfolioreturns2014to2016.png)
 ```r
 
 # === input parameters ===
