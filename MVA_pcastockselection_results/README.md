@@ -14,10 +14,9 @@ selection process. Stocks are iteratively selected according to their contributi
 to principal components. For each portfolio the performance is plotted and the time
 series of returns.'
 
-  
 Keywords: pca, time series, plot, returns, stock selection, portfolio management 
      
-See also: MVA_pcastockselection_algorithm, MVA_pcastockselection_datapreperation
+See also: 'MVA_pcastockselection_algorithm, MVA_pcastockselection_datapreperation'
 
 Author: Christoph Schult
 
