@@ -47,8 +47,10 @@ dataconst    = read.csv2(sReadConstituents, header = FALSE, dec = ",")
 iadatesconst = as.Date(dataconst[, iColDates], sDateFormat)
 
 # find relevant interval and constituents
-lintervalprices = iadatesprices <= as.Date(sEndDate, sDateFormat) & iadatesprices >= as.Date(sStartDate, sDateFormat)
-lintervalconst  = iadatesconst <= as.Date(sEndDate, sDateFormat) & iadatesconst >= as.Date(sStartDate, sDateFormat)
+iStartDate      = as.Date(sEndDate, sDateFormat)
+iEndDate        = as.Date(sStartDate, sDateFormat)
+lintervalprices = iadatesprices <= iEndDate & iadatesprices >= iStartDate
+lintervalconst  = iadatesconst <= iEndDate & iadatesconst >= iStartDate
 
 # get relevant assets
 relassets = unique(c(as.matrix(dataconst[lintervalconst, -iColDates])))
