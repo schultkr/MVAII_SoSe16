@@ -16,7 +16,7 @@ series of returns.'
 
 Keywords: pca, time series, plot, returns, stock selection, portfolio management 
      
-See also: MVApcapfalgo, MVApcapfdata'
+See also: MVApcapfalgo, MVApcapfdata
 
 Author: Christoph Schult
 
