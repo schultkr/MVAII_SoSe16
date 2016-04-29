@@ -5,27 +5,29 @@
 
 ```yaml
 
-Name of Quantlet: MVApcapfalgo
 
+Name of Quantlet: MVApcapfalgo
+ 
 Published in: MVA
 
-Description: ÔThis quantlet applies the selection algorithm based on principal component analysis to identify           stocks, which have contributed heavily to the movement in the original portfolio. In each step the algorithm 
+Description: "This quantlet applies the selection algorithm based on principal component analysis to identify           stocks, which have contributed heavily to the movement in the original portfolio. In each step the algorithm 
 applies pca to the correlation matrix of stocks not removed yet. Eigenvectors are selected associated with 
 eigenvalues smaller than one. Stocks with the highest absolute weight in these eigenvectors are removed. This 
 step is repeated until either the number of remaining stocks reaches a predefined threshold or the remaining 
-eigenvalues are sufficiently close to each other.Õ
+eigenvalues are sufficiently close to each other."
 
 Keywords: pca, returns, stock selection, portfolio management, eigenvalues, eigenvectors
-
+     
 See also: MVApcapfresults, MVApcapfdata
 
 Author: Christoph Schult
 
 Datafile: Prices.dat
-
-Output: ÔOne plot illustrating how in each step the maximum bilateral correlation and the number of constituents 
+     
+Output: "One plot illustrating how in each step the maximum bilateral correlation and the number of constituents 
 is reduced. Furthermore an object containing equal weighted portfolios with all and the selected stocks are saved 
-in a file.Õ
+in a file.""
+
 
 ```
 ![Picture1](IterationSteps.png)
@@ -39,7 +41,7 @@ graphics.off()
 # Install packages if not installed
 libraries = c("REdaS")
 lapply(libraries, function(x) if (!(x %in% installed.packages())) {
-install.packages(x)
+  install.packages(x)
 })
 
 # Load packages
@@ -85,59 +87,59 @@ setwd(sPathRoot)
 
 # function to remove missing values from vector
 complete = function(x) {
-all(complete.cases(x))
+  all(complete.cases(x))
 }
 
 # function to compute shares
 compshares = function(price, weights, value = 1) {
-shares   = as.matrix((value * weights)/price)
+  shares   = as.matrix((value * weights)/price)
 }
 
 # function to find absolute maximum of vector
 detectmax = function(x) {
-which(abs(x) == max(abs(x)))
+  which(abs(x) == max(abs(x)))
 }
 
 # compute returns for a vector
 returnsfun = function(x) {
-n = length(x)
-switch(sTypeReturns, 
-grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)],
-logreturn = diff(log(x), iStepSize))
+  n = length(x)
+  switch(sTypeReturns, 
+         grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)],
+         logreturn = diff(log(x), iStepSize))
 }
 
 # define selection algorithm
 selectalgofun = function(returnmatrix, scale, iminassets) {
-iassetnum     = ncol(returnmatrix)
-iStop         = sd(eigen(cor(returnmatrix))$values)
-iStopCriteria = iStop * scale
-lCont         = (iStop > iStopCriteria) & (iassetnum > iminassets)
-while (lCont) {
-eigenvalues = eigen(cor(returnmatrix, method = c(stypecor)))$values
-eigenvectors = eigen(cor(returnmatrix, method = c(stypecor)))$vectors
-iStop = sd(eigenvalues)
-if (iStop > iStopCriteria) {
-lreleigenvalues = eigenvalues < iSelectCriteria
-iadelete        = unique(apply(eigenvectors[, lreleigenvalues], 2, detectmax))
-iassetnum       = ncol(returnmatrix) - length(iadelete)
-if (iassetnum > iminassets) {
-returnmatrix = returnmatrix[, -iadelete]
-}
-}
-lCont = (iStop > iStopCriteria) & (iassetnum > iminassets)
-}
-return(returnmatrix)
+  iassetnum     = ncol(returnmatrix)
+  iStop         = sd(eigen(cor(returnmatrix))$values)
+  iStopCriteria = iStop * scale
+  lCont         = (iStop > iStopCriteria) & (iassetnum > iminassets)
+  while (lCont) {
+    eigenvalues = eigen(cor(returnmatrix, method = c(stypecor)))$values
+    eigenvectors = eigen(cor(returnmatrix, method = c(stypecor)))$vectors
+    iStop = sd(eigenvalues)
+    if (iStop > iStopCriteria) {
+      lreleigenvalues = eigenvalues < iSelectCriteria
+      iadelete        = unique(apply(eigenvectors[, lreleigenvalues], 2, detectmax))
+      iassetnum       = ncol(returnmatrix) - length(iadelete)
+      if (iassetnum > iminassets) {
+        returnmatrix = returnmatrix[, -iadelete]
+      }
+    }
+    lCont = (iStop > iStopCriteria) & (iassetnum > iminassets)
+  }
+  return(returnmatrix)
 }
 
 # define function to use different stop criteria
 varystopcritfun = function(scalecriteria) {
-datareduced    = selectalgofun(datareturns, scalecriteria, iminassets)
-assetnames     = colnames(datareduced)
-lassets        = colnames(datareturns) %in% assetnames
-cormatrix      = cor(as.matrix(datareturns[, lassets]), method = c(stypecor))
-lowercormatrix = cormatrix[lower.tri(cormatrix, diag = FALSE)]
-maxcor         = max(lowercormatrix)
-return(c(correlation = list(maxcor), assets = list(assetnames)))
+  datareduced    = selectalgofun(datareturns, scalecriteria, iminassets)
+  assetnames     = colnames(datareduced)
+  lassets        = colnames(datareturns) %in% assetnames
+  cormatrix      = cor(as.matrix(datareturns[, lassets]), method = c(stypecor))
+  lowercormatrix = cormatrix[lower.tri(cormatrix, diag = FALSE)]
+  maxcor         = max(lowercormatrix)
+  return(c(correlation = list(maxcor), assets = list(assetnames)))
 }
 
 # === find assets with pca selection criteria ===
@@ -163,7 +165,7 @@ dataprices  = dataprices[, lkeep]
 KMOScriteria = KMOS(datareturns, use = c("all.obs"))$KMO
 
 if (KMOScriteria < 0.5) {
-print("The period of interest might have not sufficient information to apply pca")
+  print("The period of interest might have not sufficient information to apply pca")
 }
 
 # apply selection algorithm to data
@@ -180,8 +182,8 @@ x.tick.pos = x.labels
 y.tick.pos = as.numeric(round(iacorrelations, 2))
 y.labels   = y.tick.pos
 plot(iaNbassets, iacorrelations, main = "Iteration Steps of the Selection Algorithm",
-type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
-ylab = "maximum correlation", axes = FALSE)
+     type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
+     ylab = "maximum correlation", axes = FALSE)
 axis(side = 2, at = y.tick.pos, label = y.tick.pos, lwd = 0.5, col.axis = "darkblue")
 axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
 
