@@ -1,5 +1,4 @@
-
-Name of Quantlet: MVA_pcastockselection_dataprep
+Name of Quantlet: MVA_pcapfdata
  
 Published in: MVA
 
@@ -10,10 +9,10 @@ MVA_pcastockselection_algorithm as input to select stocks.'
   
 Keywords: stocks, portfolio, time series, stock selection, index, pca
      
-See also: 'MVA_pcastockselection_algorithm, MVA_pcastockselection_results'
+See also: MVApcapfalgo, MVApcapfresults
 
 Author: Christoph, Schult
 
 Datafile: TimeSeriesData.csv, Constituents.csv
      
-Output: A csv file with prices of stocks for a determined time interval.
+Output: A dat file with prices of stocks for a determined time interval.

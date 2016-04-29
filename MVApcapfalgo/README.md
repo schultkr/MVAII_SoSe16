@@ -39,53 +39,29 @@ weighted portfolio is contracted and saved in a .dat file'
 # remove variables
 rm(list = ls())
 
-# reset graphics
-graphics.off()
+# === input parameters ===
 
-# Install packages if not installed
-libraries = c("REdaS")
-lapply(libraries, function(x) if (!(x %in% installed.packages())) {
-  install.packages(x)
-})
+# define root path
+sPathRoot = "C:/"  # for MAC "/Users/"
 
-# Load packages
-lapply(libraries, library, quietly = TRUE, character.only = TRUE)
+# define file with price data
+sReadDataFile = "TimeSeriesData.csv"
 
+# define file with constituents for the portfoilio
+sReadConstituents = "Constituents.csv"
 
-# === input parameters === 
+# define name of file to save respective prices
+sSavePrices = "Prices.dat"
 
-# define paths and filenames
-sPathRoot     = '/Users/christophschult/Gitlab/MVAII_SoSe16/MVA_pcastockselection_algorithm/MVA_pcastockselection_algorithm.R' # C:/" # for MAC "/Users/"
-sReadDataFile = "Prices.dat"
-sWriteResults = "Portfolios.dat"
-
-# define auxiliary parameters for the data
-sDateFormat = "%d.%m.%Y"
-
-# define returns to compute
-sTypeReturns = "grossreturn"
-iStepSize    = 1
-
-# define criteria for selection algorithm
-iScaleCriteria = as.matrix(seq(0.01, 0.9, 0.05))
-
-# eigenvalues smaller than <iSelectCriteria> are deleted and their respective eigenvectors
-iSelectCriteria = 1
-
-# minimum number of assets included after selection process
-iminassets = 10
-
-# which correlation method is used (default)
-stypecor = "spearman"
-
-# define sample size for random samples
-iSampleSize = 1000
-
-# define where the dates are stored in input file
+# define column in data file where the dates are stored
 iColDates = 1
 
-# set working directory
-setwd(sPathRoot)
+# define the date format in the dataset
+sDateFormat = "%d.%m.%Y"
+
+# define period to look at
+sStartDate = "01.04.2006"
+sEndDate   = "01.04.2016"
 
 # === definition of functions ===
 
@@ -94,126 +70,39 @@ complete = function(x) {
   all(complete.cases(x))
 }
 
-# function to compute shares
-compshares = function(price, weights, value = 1) {
-  shares   = as.matrix((value * weights)/price)
-}
+# === data processing ===
 
-# function to find absolute maximum of vector
-detectmax = function(x) {
-  which(abs(x) == max(abs(x)))
-}
+# set working directory
+setwd(sPathRoot)
 
-# compute returns for a vector
-returnsfun = function(x) {
-  n = length(x)
-  switch(sTypeReturns, 
-         grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)],
-         logreturn = diff(log(x), iStepSize))
-}
+# load prices
+dataprices           = read.csv2(sReadDataFile, header = TRUE, dec = ",")
+colnames(dataprices) = sub("X", "", colnames(dataprices))
+iadatesprices        = as.Date(dataprices[, iColDates], sDateFormat)
 
-# define selection algorithm
-selectalgofun = function(returnmatrix, scale, iminassets) {
-  iassetnum     = ncol(returnmatrix)
-  iStop         = sd(eigen(cor(returnmatrix))$values)
-  iStopCriteria = iStop * scale
-  lCont         = (iStop > iStopCriteria) & (iassetnum > iminassets)
-  while (lCont) {
-    eigenvalues = eigen(cor(returnmatrix, method = c(stypecor)))$values
-    eigenvectors = eigen(cor(returnmatrix, method = c(stypecor)))$vectors
-    iStop = sd(eigenvalues)
-    if (iStop > iStopCriteria) {
-      lreleigenvalues = eigenvalues < iSelectCriteria
-      iadelete        = unique(apply(eigenvectors[, lreleigenvalues], 2, detectmax))
-      iassetnum       = ncol(returnmatrix) - length(iadelete)
-      if (iassetnum > iminassets) {
-        returnmatrix = returnmatrix[, -iadelete]
-      }
-    }
-    lCont = (iStop > iStopCriteria) & (iassetnum > iminassets)
-  }
-  return(returnmatrix)
-}
+# load constituents lists
+dataconst    = read.csv2(sReadConstituents, header = FALSE, dec = ",")
+iadatesconst = as.Date(dataconst[, iColDates], sDateFormat)
 
-# define function to use different stop criteria
-varystopcritfun = function(scalecriteria) {
-  datareduced    = selectalgofun(datareturns, scalecriteria, iminassets)
-  assetnames     = colnames(datareduced)
-  lassets        = colnames(datareturns) %in% assetnames
-  cormatrix      = cor(as.matrix(datareturns[, lassets]), method = c(stypecor))
-  lowercormatrix = cormatrix[lower.tri(cormatrix, diag = FALSE)]
-  maxcor         = max(lowercormatrix)
-  return(c(correlation = list(maxcor), assets = list(assetnames)))
-}
+# find relevant interval and constituents
+lintervalprices = iadatesprices <= as.Date(sEndDate, sDateFormat) & iadatesprices >= as.Date(sStartDate, sDateFormat)
+lintervalconst  = iadatesconst <= as.Date(sEndDate, sDateFormat) & iadatesconst >= as.Date(sStartDate, sDateFormat)
 
-# === find assets with pca selection criteria ===
+# get relevant assets
+relassets = unique(c(as.matrix(dataconst[lintervalconst, -iColDates])))
+relassets = relassets[is.na(relassets) == FALSE]
 
-# load price data
-input         = read.table(sReadDataFile)
-dataprices    = input[, -iColDates]
-iadatesprices = input[, iColDates]
+# find position of relevant const in data
+lrelconst  = colnames(dataprices) %in% relassets
+dataprices = dataprices[lintervalprices, lrelconst]
 
-# compute equal weigthed portfolio of all stocks
-startprices    = dataprices[1, ]
-weightsvec     = rep(1/length(startprices))
-sharesoriginal = compshares(startprices, weightsvec, 1)
-valueoriginal  = as.matrix(dataprices) %*% t(sharesoriginal)
+# delete assets with missing values
+lComplete     = apply(dataprices, 2, complete)
+dataprices    = dataprices[, lComplete]
+iadatesprices = iadatesprices[lintervalprices]
 
-# create returns matrix
-datareturns = apply(dataprices, 2, returnsfun)
-lkeep       = apply(datareturns, 2, complete)
-datareturns = datareturns[, lkeep]
-dataprices  = dataprices[, lkeep]
+# === save data ===
 
-# check Kaiser-Meyer-Olkin criterion
-KMOScriteria = KMOS(datareturns, use = c("all.obs"))$KMO
-
-if (KMOScriteria < 0.5) {
-  print("The period of interest might have not sufficient information to apply pca")
-}
-
-# apply selection algorithm to data
-resultsalgorithm = apply(iScaleCriteria, 1, varystopcritfun)
-
-# find optimal scale parameter w.r.t. the minimum maximum correlation across assets
-iacorrelations = rapply(resultsalgorithm, function(x) x, classes = "numeric")
-iaNbassets     = rapply(resultsalgorithm, function(x) length(x), classes = "character")
-iaPosOpt       = which(iScaleCriteria == min(iScaleCriteria[iacorrelations == min(iacorrelations)])) 
-
-# plot results of selection algorithm depending on scale parameter
-par(mfrow = c(2, 1))
-
-# plot for maximum correlation
-x.labels       = iScaleCriteria
-x.tick.pos     = iScaleCriteria
-y.tick.pos     = unique(as.numeric(round(iacorrelations, 2)))
-y.labels       = y.tick.pos
-
-plot(iScaleCriteria, iacorrelations, main = "Maximum Correlation for Scale Parameters",
-     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
-     ylab = "Maximum correlation", axes = FALSE)
-axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
-axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
-
-# plot for number of assets
-y.tick.pos     = iaNbassets
-y.labels       = y.tick.pos
-plot(iScaleCriteria, iaNbassets, main = "Number of Assets for Scale Parameters",
-     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
-     ylab = "Number of assets", axes = FALSE)
-axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
-axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
-
-# calculate equal weight portfoio of stocks selected by pca
-assetsopt   = resultsalgorithm[[iaPosOpt]]$assets
-lassetsopt  = colnames(dataprices) %in% assetsopt
-startprices = dataprices[1, lassetsopt]
-weightsvec  = rep(1/length(startprices))
-sharespca   = compshares(startprices, weightsvec, 1)
-valuepca    = as.matrix(dataprices[, lassetsopt]) %*% t(sharespca)
-
-
-# collect portfolios for further analysis
-output = list(Dates = iadatesprices, PFallassets = as.numeric(valueoriginal), PFoptassets = as.numeric(valuepca))
-write.table(output, file = sWriteResults)
+output = list(Dates = iadatesprices, RI = dataprices)
+write.table(output, sSavePrices, col.names = TRUE)
 ```
