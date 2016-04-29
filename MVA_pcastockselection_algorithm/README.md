@@ -30,7 +30,7 @@ weighted portfolio is contracted and saved in a .dat file'
 
 ```
 
-![Picture1](AlgoResults.png)
+![Picture1](AlgoResutls.png)
 
 ```r
 # remove variables
