@@ -14,7 +14,7 @@ Description: 'This quantlet applies the selection algorithm based on principal c
 applies pca to the correlation matrix of stocks not removed yet. Eigenvectors are selected associated with 
 eigenvalues smaller than one. Stocks with the highest absolute weight in these eigenvectors are removed. This 
 step is repeated until either the number of remaining stocks reaches a predefined threshold or the remaining 
-eigenvalues are sufficiently close to each other. Furthermore the algorithm is applied for different scale parameter values.???
+eigenvalues are sufficiently close to each other. Furthermore the algorithm is applied for different scale parameter values.'
 
 Keywords: pca, returns, stock selection, portfolio management, eigenvalues, eigenvectors
      
