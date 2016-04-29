@@ -5,7 +5,7 @@
 
 ```yaml
 
-Name of Quantlet: MVA_pcapfresults
+Name of Quantlet: MVApcapfresults
  
 Published in: MVA
 
@@ -53,8 +53,9 @@ setwd(sPathRoot)
 # function to compute returns for a vector
 returnsfun = function(x) {
   n = length(x)
-  switch(sTypeReturns, grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)], logreturn = diff(log(x), 
-                                                                                                                          iStepSize))
+  switch(sTypeReturns, 
+         grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)],
+         logreturn = diff(log(x), iStepSize))
 }
 
 

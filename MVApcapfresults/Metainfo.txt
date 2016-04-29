@@ -1,5 +1,5 @@
 
-Name of Quantlet: MVA_pcapfresults
+Name of Quantlet: MVApcapfresults
  
 Published in: MVA
 
