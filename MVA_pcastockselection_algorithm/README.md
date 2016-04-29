@@ -5,16 +5,15 @@
 
 ```yaml
 
-
 Name of Quantlet: MVApcapfalgo
  
 Published in: MVA
 
-Description: "This quantlet applies the selection algorithm based on principal component analysis to identify           stocks, which have contributed heavily to the movement in the original portfolio. In each step the algorithm 
+Description: 'This quantlet applies the selection algorithm based on principal component analysis to identify           stocks, which have contributed heavily to the movement in the original portfolio. In each step the algorithm 
 applies pca to the correlation matrix of stocks not removed yet. Eigenvectors are selected associated with 
 eigenvalues smaller than one. Stocks with the highest absolute weight in these eigenvectors are removed. This 
 step is repeated until either the number of remaining stocks reaches a predefined threshold or the remaining 
-eigenvalues are sufficiently close to each other."
+eigenvalues are sufficiently close to each other.'
 
 Keywords: pca, returns, stock selection, portfolio management, eigenvalues, eigenvectors
      
@@ -27,6 +26,7 @@ Datafile: Prices.dat
 Output: "One plot illustrating how in each step the maximum bilateral correlation and the number of constituents 
 is reduced. Furthermore an object containing equal weighted portfolios with all and the selected stocks are saved 
 in a file."
+
 
 
 ```
