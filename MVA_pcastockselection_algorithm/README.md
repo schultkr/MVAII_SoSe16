@@ -5,6 +5,7 @@
 
 ```yaml
 
+
 Name of Quantlet: MVApcapfalgo
  
 Published in: MVA
@@ -13,7 +14,7 @@ Description: 'This quantlet applies the selection algorithm based on principal c
 applies pca to the correlation matrix of stocks not removed yet. Eigenvectors are selected associated with 
 eigenvalues smaller than one. Stocks with the highest absolute weight in these eigenvectors are removed. This 
 step is repeated until either the number of remaining stocks reaches a predefined threshold or the remaining 
-eigenvalues are sufficiently close to each other.'
+eigenvalues are sufficiently close to each other. Furthermore the algorithm is applied for different scale parameter values.???
 
 Keywords: pca, returns, stock selection, portfolio management, eigenvalues, eigenvectors
      
@@ -23,14 +24,12 @@ Author: Christoph Schult
 
 Datafile: Prices.dat
      
-Output: "One plot illustrating how in each step the maximum bilateral correlation and the number of constituents 
-is reduced. Furthermore an object containing equal weighted portfolios with all and the selected stocks are saved 
-in a file."
-
-
+Output: 'Two plots illustrating how the result of the algorithm depends on the
+selected scale parameter. Furthermore based on the selected assets an equal 
+weighted portfolio is contracted and saved in a .dat file???
 
 ```
-![Picture1](IterationSteps.png)
+![Picture1](AlgoResults.png)
 ```r
 # remove variables
 rm(list = ls())
@@ -176,15 +175,28 @@ iacorrelations = rapply(resultsalgorithm, function(x) x, classes = "numeric")
 iaNbassets     = rapply(resultsalgorithm, function(x) length(x), classes = "character")
 iaPosOpt       = which(iScaleCriteria == min(iScaleCriteria[iacorrelations == min(iacorrelations)])) 
 
-# plot iteration steps of the selection algorithm
-x.labels   = as.numeric(iaNbassets)
-x.tick.pos = x.labels
-y.tick.pos = as.numeric(round(iacorrelations, 2))
-y.labels   = y.tick.pos
-plot(iaNbassets, iacorrelations, main = "Iteration Steps of the Selection Algorithm",
-     type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
-     ylab = "maximum correlation", axes = FALSE)
-axis(side = 2, at = y.tick.pos, label = y.tick.pos, lwd = 0.5, col.axis = "darkblue")
+# plot results of selection algorithm depending on scale parameter
+par(mfrow = c(2, 1))
+
+# plot for maximum correlation
+x.labels       = iScaleCriteria
+x.tick.pos     = iScaleCriteria
+y.tick.pos     = unique(as.numeric(round(iacorrelations, 2)))
+y.labels       = y.tick.pos
+
+plot(iScaleCriteria, iacorrelations, main = "Maximum Correlation for Scale Parameters",
+     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
+     ylab = "Maximum correlation", axes = FALSE)
+axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
+axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
+
+# plot for number of assets
+y.tick.pos     = iaNbassets
+y.labels       = y.tick.pos
+plot(iScaleCriteria, iaNbassets, main = "Number of Assets for Scale Parameters",
+     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
+     ylab = "Number of assets", axes = FALSE)
+axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
 axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
 
 # calculate equal weight portfoio of stocks selected by pca
@@ -199,5 +211,4 @@ valuepca    = as.matrix(dataprices[, lassetsopt]) %*% t(sharespca)
 # collect portfolios for further analysis
 output = list(Dates = iadatesprices, PFallassets = as.numeric(valueoriginal), PFoptassets = as.numeric(valuepca))
 write.table(output, file = sWriteResults)
-
 ```

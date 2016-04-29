@@ -142,15 +142,28 @@ iacorrelations = rapply(resultsalgorithm, function(x) x, classes = "numeric")
 iaNbassets     = rapply(resultsalgorithm, function(x) length(x), classes = "character")
 iaPosOpt       = which(iScaleCriteria == min(iScaleCriteria[iacorrelations == min(iacorrelations)])) 
 
-# plot iteration steps of the selection algorithm
-x.labels   = as.numeric(iaNbassets)
-x.tick.pos = x.labels
-y.tick.pos = as.numeric(round(iacorrelations, 2))
-y.labels   = y.tick.pos
-plot(iaNbassets, iacorrelations, main = "Iteration Steps of the Selection Algorithm",
-     type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
-     ylab = "maximum correlation", axes = FALSE)
-axis(side = 2, at = y.tick.pos, label = y.tick.pos, lwd = 0.5, col.axis = "darkblue")
+# plot results of selection algorithm depending on scale parameter
+par(mfrow = c(2, 1))
+
+# plot for maximum correlation
+x.labels       = iScaleCriteria
+x.tick.pos     = iScaleCriteria
+y.tick.pos     = unique(as.numeric(round(iacorrelations, 2)))
+y.labels       = y.tick.pos
+
+plot(iScaleCriteria, iacorrelations, main = "Maximum Correlation for Scale Parameters",
+     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
+     ylab = "Maximum correlation", axes = FALSE)
+axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
+axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
+
+# plot for number of assets
+y.tick.pos     = iaNbassets
+y.labels       = y.tick.pos
+plot(iScaleCriteria, iaNbassets, main = "Number of Assets for Scale Parameters",
+     type = "b", lwd = 3, col = "darkblue", xlab = "Scale parameter", 
+     ylab = "Number of assets", axes = FALSE)
+axis(side = 2, at = y.tick.pos, label = y.labels, lwd = 0.5, col.axis = "darkblue")
 axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
 
 # calculate equal weight portfoio of stocks selected by pca
