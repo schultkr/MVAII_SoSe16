@@ -26,10 +26,12 @@ Datafile: Prices.dat
      
 Output: 'Two plots illustrating how the result of the algorithm depends on the
 selected scale parameter. Furthermore based on the selected assets an equal 
-weighted portfolio is contracted and saved in a .dat file???
+weighted portfolio is contracted and saved in a .dat file'
 
 ```
+
 ![Picture1](AlgoResults.png)
+
 ```r
 # remove variables
 rm(list = ls())
