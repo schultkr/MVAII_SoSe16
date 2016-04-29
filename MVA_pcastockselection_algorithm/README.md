@@ -26,7 +26,7 @@ Datafile: Prices.dat
      
 Output: "One plot illustrating how in each step the maximum bilateral correlation and the number of constituents 
 is reduced. Furthermore an object containing equal weighted portfolios with all and the selected stocks are saved 
-in a file.""
+in a file."
 
 
 ```
