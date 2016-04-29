@@ -36,7 +36,6 @@ EUROPE 600 index.'
 ![Picture3](portfolioreturns2006to2016.png)
 
 ```r
-
 # === input parameters ===
 rm(list = ls())
 # define paths and filenames
@@ -46,7 +45,7 @@ sReadDataFile = c("Portfolios2014to2016.dat", "Portfolios2011to2016.dat", "Portf
 sDateFormat = "%d.%m.%Y"
 # define returns
 sTypeReturns = "grossreturn"
-iStepSize = 1
+iStepSize    = 1
 
 # set working directory
 setwd(sPathRoot)
@@ -104,7 +103,8 @@ plotportfolios = function(sFileName) {
   xtickpos    = as.numeric(sapply(xlabels, createticks))
   
   # create plot
-  plot(pfallassets, type = "l", lwd = 3, lty = 1, col = "darkblue", frame = FALSE, axes = FALSE, xlab = "", ylab = "Portfolio values", 
+  plot(pfallassets, type = "l", lwd = 3, lty = 1, col = "darkblue",
+       frame = FALSE, axes = FALSE, xlab = "", ylab = "Portfolio values", 
        main = sMain, ylim = ylimvalues, xlim = xlimtime)
   # add values for portfolio with selected consts according to pca
   lines(pfoptassets, lwd = 3, lty = 2, col = "darkred")
@@ -112,7 +112,8 @@ plotportfolios = function(sFileName) {
   axis(side = 2, lwd = 0.5)
   
   # === plot returns === create plot for returns
-  plot(retallassets, type = "l", lwd = 3, lty = 1, col = "darkblue", frame = FALSE, axes = FALSE, xlab = "Date", ylab = "Returns", 
+  plot(retallassets, type = "l", lwd = 3, lty = 1, col = "darkblue",
+       frame = FALSE, axes = FALSE, xlab = "Date", ylab = "Returns", 
        main = "", ylim = ylimret, xlim = xlimtime)
   lines(retoptassets, lwd = 3, lty = 2, col = "darkred")
   
@@ -124,5 +125,4 @@ plotportfolios = function(sFileName) {
 
 # create plots
 lapply(sReadDataFile, plotportfolios)
-
 ```
