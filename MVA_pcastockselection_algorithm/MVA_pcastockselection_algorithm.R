@@ -4,23 +4,29 @@ rm(list = ls())
 # reset graphics
 graphics.off()
 
-# load and if necessary install required packages 
-# install.packages('REdaS')
-require(REdaS)
+# Install packages if not installed
+libraries = c("REdaS")
+lapply(libraries, function(x) if (!(x %in% installed.packages())) {
+  install.packages(x)
+})
+
+# Load packages
+lapply(libraries, library, quietly = TRUE, character.only = TRUE)
+
 
 # === input parameters === 
 
 # define paths and filenames
-sPathRoot = "C:/" # for MAC "/Users/"
-sReadDataFile = "Prices2011to2016.dat"
-sWriteResults = "Portfolios2011to2016.dat"
+sPathRoot     = '/Users/christophschult/Gitlab/MVAII_SoSe16/MVA_pcastockselection_algorithm/MVA_pcastockselection_algorithm.R' # C:/" # for MAC "/Users/"
+sReadDataFile = "Prices.dat"
+sWriteResults = "Portfolios.dat"
 
 # define auxiliary parameters for the data
 sDateFormat = "%d.%m.%Y"
 
 # define returns to compute
 sTypeReturns = "grossreturn"
-iStepSize = 1
+iStepSize    = 1
 
 # define criteria for selection algorithm
 iScaleCriteria = as.matrix(seq(0.01, 0.9, 0.05))
@@ -52,7 +58,7 @@ complete = function(x) {
 
 # function to compute shares
 compshares = function(price, weights, value = 1) {
-  shares = as.matrix((value * weights)/price)
+  shares   = as.matrix((value * weights)/price)
 }
 
 # function to find absolute maximum of vector
@@ -63,23 +69,25 @@ detectmax = function(x) {
 # compute returns for a vector
 returnsfun = function(x) {
   n = length(x)
-  switch(sTypeReturns, grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)], logreturn = diff(log(x), iStepSize))
+  switch(sTypeReturns, 
+         grossreturn = (x[(iStepSize + 1):n] - x[1:(n - iStepSize)])/x[1:(n - iStepSize)],
+         logreturn = diff(log(x), iStepSize))
 }
 
 # define selection algorithm
 selectalgofun = function(returnmatrix, scale, iminassets) {
-  iassetnum = ncol(returnmatrix)
-  iStop = sd(eigen(cor(returnmatrix))$values)
+  iassetnum     = ncol(returnmatrix)
+  iStop         = sd(eigen(cor(returnmatrix))$values)
   iStopCriteria = iStop * scale
-  lCont = (iStop > iStopCriteria) & (iassetnum > iminassets)
+  lCont         = (iStop > iStopCriteria) & (iassetnum > iminassets)
   while (lCont) {
     eigenvalues = eigen(cor(returnmatrix, method = c(stypecor)))$values
     eigenvectors = eigen(cor(returnmatrix, method = c(stypecor)))$vectors
     iStop = sd(eigenvalues)
     if (iStop > iStopCriteria) {
       lreleigenvalues = eigenvalues < iSelectCriteria
-      iadelete = unique(apply(eigenvectors[, lreleigenvalues], 2, detectmax))
-      iassetnum = ncol(returnmatrix) - length(iadelete)
+      iadelete        = unique(apply(eigenvectors[, lreleigenvalues], 2, detectmax))
+      iassetnum       = ncol(returnmatrix) - length(iadelete)
       if (iassetnum > iminassets) {
         returnmatrix = returnmatrix[, -iadelete]
       }
@@ -91,33 +99,33 @@ selectalgofun = function(returnmatrix, scale, iminassets) {
 
 # define function to use different stop criteria
 varystopcritfun = function(scalecriteria) {
-  datareduced = selectalgofun(datareturns, scalecriteria, iminassets)
-  assetnames = colnames(datareduced)
-  lassets = colnames(datareturns) %in% assetnames
-  cormatrix = cor(as.matrix(datareturns[, lassets]), method = c(stypecor))
+  datareduced    = selectalgofun(datareturns, scalecriteria, iminassets)
+  assetnames     = colnames(datareduced)
+  lassets        = colnames(datareturns) %in% assetnames
+  cormatrix      = cor(as.matrix(datareturns[, lassets]), method = c(stypecor))
   lowercormatrix = cormatrix[lower.tri(cormatrix, diag = FALSE)]
-  maxcor = max(lowercormatrix)
+  maxcor         = max(lowercormatrix)
   return(c(correlation = list(maxcor), assets = list(assetnames)))
 }
 
 # === find assets with pca selection criteria ===
 
 # load price data
-input = read.table(sReadDataFile)
-dataprices = input[, -iColDates]
+input         = read.table(sReadDataFile)
+dataprices    = input[, -iColDates]
 iadatesprices = input[, iColDates]
 
 # compute equal weigthed portfolio of all stocks
-startprices = dataprices[1, ]
-weightsvec = rep(1/length(startprices))
+startprices    = dataprices[1, ]
+weightsvec     = rep(1/length(startprices))
 sharesoriginal = compshares(startprices, weightsvec, 1)
-valueoriginal = as.matrix(dataprices) %*% t(sharesoriginal)
+valueoriginal  = as.matrix(dataprices) %*% t(sharesoriginal)
 
 # create returns matrix
 datareturns = apply(dataprices, 2, returnsfun)
-lkeep = apply(datareturns, 2, complete)
+lkeep       = apply(datareturns, 2, complete)
 datareturns = datareturns[, lkeep]
-dataprices = dataprices[, lkeep]
+dataprices  = dataprices[, lkeep]
 
 # check Kaiser-Meyer-Olkin criterion
 KMOScriteria = KMOS(datareturns, use = c("all.obs"))$KMO
@@ -131,27 +139,27 @@ resultsalgorithm = apply(iScaleCriteria, 1, varystopcritfun)
 
 # find optimal scale parameter w.r.t. the minimum maximum correlation across assets
 iacorrelations = rapply(resultsalgorithm, function(x) x, classes = "numeric")
-iaNbassets = rapply(resultsalgorithm, function(x) length(x), classes = "character")
-iaPosOpt = which(iScaleCriteria == min(iScaleCriteria[iacorrelations == min(iacorrelations)])) 
+iaNbassets     = rapply(resultsalgorithm, function(x) length(x), classes = "character")
+iaPosOpt       = which(iScaleCriteria == min(iScaleCriteria[iacorrelations == min(iacorrelations)])) 
 
 # plot iteration steps of the selection algorithm
-x.labels = as.numeric(iaNbassets)
+x.labels   = as.numeric(iaNbassets)
 x.tick.pos = x.labels
-
 y.tick.pos = as.numeric(round(iacorrelations, 2))
-y.labels = y.tick.pos
-plot(iaNbassets, iacorrelations, main = "Iteration Steps of the Selection Algorithm", type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
+y.labels   = y.tick.pos
+plot(iaNbassets, iacorrelations, main = "Iteration Steps of the Selection Algorithm",
+     type = "b", lwd = 3, col = "darkblue", xlab = "number of assets", 
      ylab = "maximum correlation", axes = FALSE)
 axis(side = 2, at = y.tick.pos, label = y.tick.pos, lwd = 0.5, col.axis = "darkblue")
 axis(side = 1, at = x.tick.pos, label = x.labels, lwd = 0.5, col.axis = "darkblue")
 
 # calculate equal weight portfoio of stocks selected by pca
-assetsopt = resultsalgorithm[[iaPosOpt]]$assets
-lassetsopt = colnames(dataprices) %in% assetsopt
+assetsopt   = resultsalgorithm[[iaPosOpt]]$assets
+lassetsopt  = colnames(dataprices) %in% assetsopt
 startprices = dataprices[1, lassetsopt]
-weightsvec = rep(1/length(startprices))
-sharespca = compshares(startprices, weightsvec, 1)
-valuepca = as.matrix(dataprices[, lassetsopt]) %*% t(sharespca)
+weightsvec  = rep(1/length(startprices))
+sharespca   = compshares(startprices, weightsvec, 1)
+valuepca    = as.matrix(dataprices[, lassetsopt]) %*% t(sharespca)
 
 
 # collect portfolios for further analysis
