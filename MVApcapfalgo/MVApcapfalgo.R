@@ -17,7 +17,7 @@ lapply(libraries, library, quietly = TRUE, character.only = TRUE)
 # === input parameters === 
 
 # define paths and filenames
-sPathRoot     = '/Users/christophschult/Gitlab/MVAII_SoSe16/MVA_pcastockselection_algorithm/MVA_pcastockselection_algorithm.R' # C:/" # for MAC "/Users/"
+sPathRoot     = "C:/" # for MAC "/Users/"
 sReadDataFile = "Prices.dat"
 sWriteResults = "Portfolios.dat"
 
