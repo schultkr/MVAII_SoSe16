@@ -28,12 +28,7 @@ all members of the index (blue). The asset universe are constituents in the STOX
 EUROPE 600 index.'
 
 ```
-
 ![Picture1](portfolioreturns2006to2016.png)
-
-![Picture2](portfolioreturns2011to2016.png)
-
-![Picture3](portfolioreturns2014to2016.png)
 
 ```r
 
