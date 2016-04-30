@@ -5,7 +5,7 @@
 
 ```yaml
 
-Name of Quantlet: MVA_pcapfdata
+Name of Quantlet: MVApcapfdata
  
 Published in: MVA
 
