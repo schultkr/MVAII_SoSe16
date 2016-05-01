@@ -1,7 +1,7 @@
 
 [<img src="https://github.com/QuantLet/Styleguide-and-FAQ/blob/master/pictures/banner.png" width="880" alt="Visit QuantNet">](http://quantlet.de/index.php?p=info)
 
-## [<img src="https://github.com/QuantLet/Styleguide-and-Validation-procedure/blob/master/pictures/qloqo.png" alt="Visit QuantNet">](http://quantlet.de/) **MVApcapfresults** [<img src="https://github.com/QuantLet/Styleguide-and-Validation-procedure/blob/master/pictures/QN2.png" width="60" alt="Visit QuantNet 2.0">](http://quantlet.de/d3/ia)
+## [<img src="https://github.com/QuantLet/Styleguide-and-Validation-procedure/blob/master/pictures/qloqo.png" alt="Visit QuantNet">](http://quantlet.de/) **MVApcapfresults**[<img src="https://github.com/QuantLet/Styleguide-and-Validation-procedure/blob/master/pictures/QN2.png" width="60" alt="Visit QuantNet 2.0">](http://quantlet.de/d3/ia)
 
 ```yaml
 
@@ -29,11 +29,9 @@ EUROPE 600 index.'
 
 ```
 
-![Picture1](portfolioreturns2014to2016.png)
-
+![Picture1](portfolioreturns2006to2016.png)
 ![Picture2](portfolioreturns2011to2016.png)
-
-![Picture3](portfolioreturns2006to2016.png)
+![Picture3](portfolioreturns2014to2016.png)
 
 ```r
 # === input parameters ===
